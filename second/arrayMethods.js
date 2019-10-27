@@ -40,10 +40,10 @@ const arrayMethods = {
 	},
 	
 	sort: function () {
+		time('arrayMethods', 'sort')
 		const list = Array.from(this)
 		for (let i = 1; i < list.length; i++) {
 			if (list[i] < list[0]) {
-				// move current element to the first position
 				list.unshift(list.splice(i, 1)[0])
 			}
 			else if (list[i] > list[i - 1]) {
@@ -56,7 +56,9 @@ const arrayMethods = {
 					}
 				}
 			}
+			count('arrayMethods', 'sort')
 		}
+		timeEnd('arrayMethods', 'sort')
 		return list
 	},
 	
@@ -72,8 +74,7 @@ Array.prototype.myMap = arrayMethods.map
 Array.prototype.myFilter = arrayMethods.filter
 Array.prototype.myPush = arrayMethods.push
 Array.prototype.mySort = arrayMethods.sort
-// Array.prototype.mySort = arrayMethods.sort
-// const arr = [1, 5, 7, 12, 2, 3, 4, 5]
+
 const arr = new Array(1000)
 arr.myForEach((element) => {
 	return element * 2
@@ -96,6 +97,4 @@ timeEnd('arrayMethods', 'push')
 pushArray.reverse()
 
 console.log(pushArray.mySort())
-// console.log('111', arr.mySort())
-// console.log(time)
 logGroup('arrayMethods')
