@@ -8,31 +8,32 @@ const buttonCharts = {
   7: ['p', 'q', 'r', 's'],
   8: ['t', 'u', 'v'],
   9: ['w', 'x', 'y', 'z'],
-  0: [' '],
+  'zero': [' '],
   '*': ['.'],
   '#': ['']
 }
 
 let word = ''
 let timeout = null
+const keyboard = document.getElementById('keyboard')
 function Phone () {
   const screen = document.getElementById('screen')
   let callCount = 0
   let currentLength = 0
   let currentButtonValue = ''
   function setWordToHtml (word) {
-    screen.innerText = word
+    screen.innerHTML = word
   }
   this.press = function (event) {
-    if (event.target.innerText === '#') {
+    if (event.target.id === '#') {
       callCount = 0
       word = ''
       setWordToHtml(word)
     }
     if (event.target !== event.currentTarget) {
-      if (!currentButtonValue || currentButtonValue === event.target.innerText) {
-        callCount >= buttonCharts[event.target.innerText].length ? callCount = 1 : callCount++
-        word = word.substr(0, currentLength) + buttonCharts[event.target.innerText][callCount - 1]
+      if (!currentButtonValue || currentButtonValue === event.target.id) {
+        callCount >= buttonCharts[event.target.id].length ? callCount = 1 : callCount++
+        word = word.substr(0, currentLength) + buttonCharts[event.target.id][callCount - 1]
         setWordToHtml(word)
         clearTimeout(timeout)
         timeout = setTimeout(() => {
@@ -44,13 +45,23 @@ function Phone () {
         currentButtonValue = ''
         currentLength = word.length
         callCount = 1
-        word = word.substr(0, currentLength) + buttonCharts[event.target.innerText][callCount - 1]
+        word = word.substr(0, currentLength) + buttonCharts[event.target.id][callCount - 1]
         setWordToHtml(word)
       }
-      currentButtonValue = event.target.innerText
+      currentButtonValue = event.target.id
     }
   }
 }
 
+function createKeyboard () {
+  for (const button in buttonCharts) {
+    const buttonNode = document.createElement('button')
+    buttonNode.innerHTML = buttonCharts[button].join(' ')
+    buttonNode.classList.add('button')
+    buttonNode.id = button
+    keyboard.appendChild(buttonNode)
+  }
+}
+createKeyboard()
 const phone = new Phone()
-document.getElementById('keyboard').addEventListener('click', phone.press)
+keyboard.addEventListener('click', phone.press)

@@ -39,10 +39,10 @@ class LinkedList {
 }
 
 function calcLikLists (first, second) {
-	const arrResult = (+[...first].reverse().join('') + +[...second].reverse().join('')).toString().split('')
-	const resLinkList = new LinkedList()
-	arrResult.forEach((value) => resLinkList.push(value))
-	return resLinkList
+  const arrResult = (+[...first].reverse().join('') + +[...second].reverse().join('')).toString().split('')
+  const resLinkList = new LinkedList()
+  arrResult.forEach((value) => resLinkList.push(value))
+  return resLinkList
 }
 
 const first = new LinkedList()
