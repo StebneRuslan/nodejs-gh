@@ -16,75 +16,75 @@ timer.logAll()
 
 const log = console // or other module
 
-let starts = {}
-let totals = {}
-let counters = {}
+const starts = {}
+const totals = {}
+const counters = {}
 
 function time (group, name) {
-	starts[group] = starts[group] || {}
-	
-	starts[group][name] = process.hrtime()
+  starts[group] = starts[group] || {}
+
+  starts[group][name] = process.hrtime()
 }
 
 function timeEnd (group, name) {
-	let start = starts[group][name]
-	let diff = process.hrtime(start)
-	
-	totals[group] = totals[group] || {}
-	
-	let total = totals[group][name] || [0, 0]
-	total[0] += diff[0]
-	total[1] += diff[1]
-	totals[group][name] = total
-	
-	count(group, name)
+  const start = starts[group][name]
+  const diff = process.hrtime(start)
+
+  totals[group] = totals[group] || {}
+
+  const total = totals[group][name] || [0, 0]
+  total[0] += diff[0]
+  total[1] += diff[1]
+  totals[group][name] = total
+
+  count(group, name)
 }
 
 function count (group, name) {
-	counters[group] = counters[group] || {}
-	
-	let count = counters[group][name] || 0
-	count += 1
-	counters[group][name] = count
+  counters[group] = counters[group] || {}
+
+  let count = counters[group][name] || 0
+  count += 1
+  counters[group][name] = count
 }
 
-let formatLog = (group) => (name) => {
-	let count = counters[group][name]
-	counters[group][name] = 0
-	
-	let totalS
-	let operationMs
-	if (totals[group] && totals[group][name]) {
-		let nano = (totals[group][name][0] * 1e9) + totals[group][name][1]
-		let avg = (nano / count)
-		
-		totalS = nano * 1e-9
-		operationMs = avg * 1e-6
-		totals[group][name] = [0, 0]
-	} else {
-		totalS = '-'
-		operationMs = '-'
-	}
-	
-	return `${name} | ${totalS} | ${count} | ${operationMs}`
+const formatLog = (group) => (name) => {
+  const count = counters[group][name]
+  counters[group][name] = 0
+
+  let totalS
+  let operationMs
+  if (totals[group] && totals[group][name]) {
+    const nano = (totals[group][name][0] * 1e9) + totals[group][name][1]
+    const avg = (nano / count)
+
+    totalS = nano * 1e-9
+    operationMs = avg * 1e-6
+    totals[group][name] = [0, 0]
+  } else {
+    totalS = '-'
+    operationMs = '-'
+  }
+
+  return `${name} | ${totalS} | ${count} | ${operationMs}`
 }
 
 function logGroup (group) {
-	if (counters[group]) {
-		log.info(`
+  if (counters[group]) {
+    log.info(`
 ${group}
 What      | Total s            | Count | Operation ms
 ----------+--------------------+-------+-------------
 ${Object.keys(counters[group]).map(formatLog(group)).join('\n')}
     `)
-		
-		totals[group] = undefined
-		counters[group] = undefined
-	}
+
+    totals[group] = undefined
+    counters[group] = undefined
+  }
 }
 
 function logAll () {
-	Object.keys(counters).map(logGroup)
+  Object.keys(counters).map(logGroup)
 }
 
 module.exports.time = time
