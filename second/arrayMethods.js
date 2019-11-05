@@ -19,7 +19,7 @@ const arrayMethods = {
     time('arrayMethods', 'map')
     const resArr = Array.from(this)
     for (let i = 0; i < this.length; i++) {
-      resArr[i] = callback(this[i], i)
+      resArr[i] = callback(this[i], i, this)
       count('arrayMethods', 'map')
     }
     timeEnd('arrayMethods', 'map')
@@ -39,25 +39,23 @@ const arrayMethods = {
     return res
   },
 
-  sort: function () {
+  sort: function (callback) {
     time('arrayMethods', 'sort')
-    const list = Array.from(this)
-    for (let i = 1; i < list.length; i++) {
-      if (list[i] < list[0]) {
-        list.unshift(list.splice(i, 1)[0])
-      } else if (list[i] > list[i - 1]) {
-        continue
-      } else {
-        for (let j = 1; j < i; j++) {
-          if (list[i] > list[j - 1] && list[i] < list[j]) {
-            list.splice(j, 0, list.splice(i, 1)[0])
-          }
+    for (let i = 0, endI = this.length - 1; i < endI; ++i) {
+      let wasSwap = false
+      for (let j = 0, endJ = endI - i; j < endJ; ++j) {
+        if (!callback ? (String(this[j]) > String(this[j + 1])) : callback(this[j], this[j + 1]) > 0) {
+          [this[j], this[j + 1]] = [this[j + 1], this[j]]
+          wasSwap = true
         }
+        count('arrayMethods', 'sort')
       }
-      count('arrayMethods', 'sort')
+      if (!wasSwap) {
+        break
+      }
     }
     timeEnd('arrayMethods', 'sort')
-    return list
+    return this
   },
 
   push: function (element) {
@@ -78,9 +76,12 @@ arr.myForEach((element) => {
   return element * 2
 })
 
-arr.myMap((element) => {
+arr.myMap((element, index, arr) => {
+  console.log(element, index, arr)
   return element * 2
 })
+
+console.log(arr)
 
 arr.myFilter((element) => {
   return element === undefined
@@ -94,5 +95,16 @@ for (let i = 0; i < 1000; i++) {
 timeEnd('arrayMethods', 'push')
 pushArray.reverse()
 
-console.log(pushArray.mySort())
+const sortArray = [Infinity, 10, null, 1, 2, 22, 11, 55, '1', 44]
+const callback = (a, b) => {
+  if (a < b) {
+    return -1
+  }
+  if (a > b) {
+    return 1
+  }
+  return 0
+}
+console.log(sortArray.mySort(callback))
+console.log(sortArray.sort(callback))
 logGroup('arrayMethods')
